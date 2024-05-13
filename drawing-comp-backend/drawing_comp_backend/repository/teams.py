@@ -10,11 +10,10 @@ class Teams:
         self.sql_engine = sql_engine
         self.session_factory = scoped_session(sessionmaker(bind=self.sql_engine))
 
-    def create_team(self, team_name="newTeam"):
+    def create_team(self, token):
         with managed_session(self.session_factory) as session:
-            token = hashlib.sha256(team_name.encode('utf-8')).hexdigest()
+            # token = hashlib.sha256(team_name.encode('utf-8')).hexdigest()
             team = db.Team(
-                name=team_name,
                 token=token
             )
             # team_data = {
@@ -25,7 +24,16 @@ class Teams:
             session.add(team)
             session.commit()
             return token
-    
+    def update_team(self, token, name):
+        with managed_session(self.session_factory) as session:
+            team = (
+                session.query(db.Team).filter_by(token=token).first()
+            )
+            if team:
+                team.name = name
+                session.commit()
+                return team.id
+            return None 
     def query_team(self, token):
         with managed_session(self.session_factory) as session:
             team = (
@@ -34,7 +42,7 @@ class Teams:
             if team:
                 team_data = {
                     "id": team.id,
-                    "name": team.name,
+                    "name": team.name, 
                     "token": team.token
                 }
                 return team_data
@@ -47,7 +55,7 @@ class Teams:
             for team in teams:
                 team_data.append({
                     "id": team.id,
-                    "name": team.name,
+                    "name": team.name, 
                     "token": team.token
                 })
             return team_data

@@ -12,6 +12,7 @@ app = Flask(__name__)
 
 project_dir = os.path.dirname(os.path.abspath(__file__))
 data_path = os.path.join(project_dir, 'data')
+os.makedirs(data_path, exist_ok=True)
 database_path = 'sqlite:///'+ os.path.join(project_dir, 'data', 'database.db')
 # app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
 # app.config['SQLALCHEMY_DATABASE_URI'] = data_path
